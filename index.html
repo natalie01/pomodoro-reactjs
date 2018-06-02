@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Pomodoro</title>
+    <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Happy+Monkey|Poiret+One" rel="stylesheet">
+			<link rel = "stylesheet" href = "app.css"/>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="text/babel">
+
+		function format(counter){
+			if(counter < 10 ){
+				return '00 : 0' + counter;
+			}
+			
+			if(counter >= 10 && counter < 60 ){
+				return '00 : ' + counter;
+			}
+			
+				if(counter >= 60 ){ 
+				
+					let minutes = Math.round(counter / 60);
+					
+					if(minutes < 10) {
+						minutes = '0' + minutes;
+					}
+					
+					let seconds = Math.round(counter % 60);
+					
+					if(seconds < 10) {
+						seconds = '0' + seconds;
+					}
+				return minutes + ':' + seconds;
+	}
+}
+
+console.log(format(65));
+
+			class App extends React.Component{
+				constructor(props){
+					super(props);
+					this.state = {
+						counting:true,
+						time: 60,
+						timesession: 60,
+						timebreak: 60,
+						status : 'stopped'
+					}
+
+					this.setTimer = this.setTimer.bind(this);
+					this.changeStatus = this.changeStatus.bind(this);
+				}
+				
+				componentDidMount(){
+					console.log('Component Did Mount');
+								this.setState({
+									timesession : 60,
+									timebreak: 60
+								})
+				
+				}
+
+					setTimer(n,t){
+
+							if(t === 'session'){
+								this.setState({
+									timesession : n
+								})
+							}
+
+							if(t === 'break'){
+								this.setState({
+									 timebreak : n
+								})
+							}
+					}
+
+
+				changeStatus(e){
+					
+					console.log('changeStatus recebido no App')			;
+				
+					console.log(e);
+
+					switch(e){
+						case 'start':
+							if(this.state.timesession >= 60 && this.state.timebreak >= 60 ){
+								console.log('START SESSION!');
+								this.setState({
+									status: 'session'
+								})
+							}
+
+						break;
+						
+						case 'break':
+
+							console.log('START BREAK!');
+							this.setState({
+									status: 'break'
+							})
+						break;
+
+						case 'stop':
+
+							console.log('STOP SESSION!');
+
+							//let formattedReset = format(0);
+							this.setState({
+									status: 'stopped',
+									timesession : 60,
+									timebreak : 60
+							})
+						break;
+
+						default: 
+
+						console.log('nenhum :(');
+						}
+					}
+
+
+					render(){
+						return (
+							<div className = { "bg-" + this.state.status + ""} >
+							<h1>Pomodoro Clock</h1>
+							{ this.state.status === "stopped" ?
+							<InitialScreen status = {this.state.status} setTimer = {this.setTimer} changeStatus = {this.changeStatus}/>
+							
+								:
+
+								<Clock title = {this.state.status} 
+										time = {this.state.time} 
+										timesession = {this.state.timesession} 
+										timebreak = {this.state.timebreak}
+										changeStatus={this.changeStatus} />			
+
+							}
+
+							</div>
+							)
+					}
+			}
+
+			class Info extends React.Component{
+				render(){
+					return (
+						<div>
+							<p className = "info"><b>Session : </b>{format(this.props.timesession)}</p>
+							<p className = "info"><b>Break : </b>{format(this.props.timebreak)}</p>
+						</div>
+						)
+				}
+			}
+
+			class Button extends React.Component{
+				render(){
+					return (
+						<div>
+								<button value = {this.props.title} className = {"btn-" + this.props.title + ""}
+								onClick = {(e) => this.props.changeStatus(e.target.value)}>{this.props.title} </button>
+							</div>
+						)
+				}
+			}
+
+			class Input extends React.Component{
+			constructor(props){
+				super(props);
+				this.state = {
+					number : 60
+
+				}		
+				this.changeInput = this.changeInput.bind(this);
+				this.reset = this.reset.bind(this);
+			}	
+
+
+				changeInput(e,op){
+					console.log(op);
+					let newNum;					
+					let num = 60;
+					let oldNum = Number(this.state.number);
+				
+					if(op === "+"){
+						newNum = oldNum  + num;
+					}
+					if(op === "-"){
+						newNum = oldNum  - num;
+					}
+
+					console.log('newNum',newNum);
+
+					if(newNum < 0){
+						newNum = 0;
+					}
+
+				let formattedNum = format(newNum);
+
+				console.log(newNum);
+				console.log('formattedNum',formattedNum);
+				this.setState({
+						number: newNum
+					})
+
+					this.props.setTimer(newNum,this.props.title);
+				}		
+				
+				reset(){
+						this.setState({
+						number: 0
+					})		
+
+					this.props.setTimer(0,this.props.title);		
+				}
+
+				render(){
+					return (
+						<div className = "input-box">
+							<p>{this.props.title}</p>
+							<br/>
+							<div className = "button-list">
+								<ul>
+									<li>
+										<button  value = "-60" className = {"btn-border-" + this.props.status + ""} onClick = {(e) => this.changeInput(e,'-')}>
+											<span className = {"span-border-" + this.props.status + ""}>&minus;</span>
+										</button>
+									</li>
+									<li>
+										<span className = {"display display-" + this.props.status + ""}>{format(this.state.number)}
+										</span>
+									
+									</li>
+									<li>
+										<button  value = "60" className = {"btn-border-" + this.props.status + ""} onClick = {(e) => this.changeInput(e,'+')}>
+											<span className = {"span-border-" + this.props.status + ""}>&#43;</span>
+										</button>
+									</li>
+								</ul>
+							</div>
+							
+					<br/>
+					<button className = {"btn-reset btn-border-" + this.props.status + ""}  onClick ={this.reset} >
+						<span className = {"span-border-" + this.props.status + ""}>Reset</span> 
+				 </button>
+						</div>
+						)
+				}
+			}
+
+			class Timer extends React.Component{
+				constructor(props){
+				super(props);
+				this.state = {
+					time : this.props.time
+				}
+				 this.countDown = this.countDown.bind(this);
+				 this.stopCountDown = this.stopCountDown.bind(this);
+				 this.handleStopButton = this.handleStopButton.bind(this);
+				}
+
+		componentDidMount(){
+
+			console.log('this.state.time dentro do Timer');
+			console.log(this.state.time);
+			if(this.state.time > 0){
+				this.timer = setInterval(this.countDown,1000);
+			}
+	}
+
+   		countDown(){
+					this.setState({
+				  	time: this.state.time - 1
+					})
+			console.log('inside CountDown');
+			console.log(this.state.time);
+
+				if(this.state.time === 0){
+					console.log('BUH!');
+						clearInterval(this.timer);
+					if( this.props.title === "session"){
+						this.props.changeStatus('break');
+					}
+					
+					if( this.props.title === "break"){
+						this.props.changeStatus('stop');
+					}
+				}
+			}
+
+
+			handleStopButton(){
+			console.log('STOP button Clicked!');
+				this.stopCountDown();
+				this.props.changeStatus('stop');
+			}
+			
+			
+			stopCountDown(){
+					console.log('STOPCOUNTDOWN!');
+					clearInterval(this.timer);
+					this.setState({
+				  	time:0
+					})
+			}
+			
+			
+				render(){
+					return (
+						<div>
+						{this.state.time > 0 ? 
+							<div>
+							 <h3>{this.props.title}</h3>
+								<p className = "display">{format(this.state.time)}</p>
+								
+								<button title = "stop" className = "btn-stop" onClick={this.handleStopButton}>Stop</button>
+							</div> : ''
+						}
+						</div>
+						)
+				}
+			}
+
+
+			class InitialScreen extends React.Component{
+				constructor(props){
+				super(props);
+				}
+			
+				render(){
+					return (
+							<div>
+								<Input status = {this.props.status}  title = "session" setTimer = {this.props.setTimer}/> 
+								<Input status = {this.props.status}  title = "break" setTimer = {this.props.setTimer}/>
+								<Button title = "start" changeStatus = {this.props.changeStatus}></Button>
+							</div>
+					)
+				}			
+			}
+			
+				class Clock extends React.Component{
+				constructor(props){
+				super(props);
+				}
+			
+				render(){
+					return (
+							<div className = {"bg-" + this.props.title + "" }>
+									{this.props.title === "session" ? <Timer title = "session" time = {this.props.timesession} changeStatus={this.props.changeStatus}/>  : ""}
+									{this.props.title === "break" ?	<Timer title = "break" time= {this.props.timebreak} changeStatus={this.props.changeStatus}/>  : ""}
+
+									<Info timesession = {this.props.timesession} timebreak = {this.props.timebreak}/> 
+							</div>
+					)
+				}
+			
+			}
+		
+      ReactDOM.render(
+        <App />,
+        document.getElementById('root')
+      );
+
+    </script>
+
+  </body>
+</html>

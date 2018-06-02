@@ -1,0 +1,138 @@
+body {
+	height:100vh;
+	margin:0;
+	margin-top:-50px;
+	padding:0;
+	text-align:center;
+	color:white;
+	font-family: 'Happy Monkey', cursive;
+}
+
+.bg-stopped{
+	background-color:rgba(255,193,7,0.88);
+	color:#f70303;
+}
+
+.bg-session{
+	background-color:rgba(0,255,103,0.85);
+	height: 100%;
+}
+
+.bg-break{
+	background-color:rgba(255,28,11,1);
+	height: 100%;
+}
+
+h1 {
+    font-size: 56px;
+    padding-top: 100px;
+}
+.display{
+font-size:38px;
+}
+
+.input-box{
+padding:20px;
+}
+
+.input-box > p{
+text-transform: capitalize;
+font-size:40px;
+font-weight:bold;
+}
+ul{
+ 	padding-left: 0;
+}
+
+ul li{
+	padding: 12px;
+	display: inline;
+}
+
+@media screen and (max-width: 308px){
+	ul li{
+	display: block;
+	}
+}
+
+button{
+	width:50px;
+	height:50px;
+	padding:5px;
+    color: white;
+    border-radius: 3px;
+    border: 2px solid white;
+	background-color:transparent;
+	margin-bottom:20px;
+	font-size:30px;
+	text-transform:capitalize;
+	cursor:pointer;
+	outline:none;	
+}
+
+.btn-border-stopped,
+.display-stopped {
+	color: #f70303;
+}
+
+
+.btn-border-stopped{
+	border:2px solid  #f70303;
+}
+
+
+.btn-border-stopped:hover{
+	border: none;
+	background-color: #f70303;
+	color:white;
+}
+
+button:hover{
+background-color: #f44336;
+}
+
+/*buttons for reset, start and stop */
+.btn-start{
+margin-top:20px;
+background-color: #f70303;
+}
+.btn-stop{
+	background-color: black;
+	color:white;
+}
+
+.btn-start,
+.btn-stop{
+  border:none;
+}
+    
+.btn-reset,
+.btn-start,
+.btn-stop{
+  width: 100px;
+}
+
+.btn-start:hover{
+background-color: #f44336;
+}
+
+.btn-border-stopped span {
+    color: #f70303;
+}
+
+
+.span-border-stopped:hover {
+    color: white;
+}
+    
+/*when clock is ticking, show information about the interval durations*/
+
+.info{
+	font-size:35px;
+}
+
+/*when clock is ticking, show if it is Session or Break*/
+h3 {
+    text-transform: capitalize;
+    font-size: 50px;
+}
